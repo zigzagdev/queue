@@ -25,7 +25,7 @@ pure-php redis:
 
 .. code-block:: bash
 
-    composer require enqueue/redis predis/predis:^1
+    composer require enqueue/redis predis/predis:^3
 
 Ensure that the plugin is loaded in your ``src/Application.php`` file, within
 the ``Application::bootstrap()`` function::
