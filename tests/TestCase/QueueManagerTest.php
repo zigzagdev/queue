@@ -175,14 +175,18 @@ class QueueManagerTest extends TestCase
     {
         QueueManager::setConfig('test', [
             'url' => $this->getFsQueueUrl(),
-            'queue' => 'test',
+            'queue' => 'original-name',
         ]);
 
         QueueManager::push(LogToDebugJob::class, [], ['config' => 'test', 'queue' => 'non-default-queue-name']);
 
-        $fsQueueFile = $this->getFsQueueUrl() . DS . 'enqueue.app.test';
+        // File path uses the (topic) not the 'queue' name.
+        $fsQueueFile = $this->getFsQueueUrl() . DS . 'enqueue.app.original-name';
         $this->assertFileExists($fsQueueFile);
-        $this->assertStringContainsString('non-default-queue-name', file_get_contents($fsQueueFile));
+
+        $contents = file_get_contents($fsQueueFile);
+        $this->assertStringContainsString('non-default-queue-name', $contents);
+        $this->assertStringNotContainsString('original-name', $contents);
     }
 
     public function testUniqueMessageIsQueuedOnlyOnce()
